@@ -93,7 +93,7 @@ export function CourtCanvas() {
     [viewport, court.width, court.height],
   )
 
-  const onStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const onStageDown = (e: Konva.KonvaEventObject<MouseEvent | TouchEvent>) => {
     const isBackground = e.target === e.target.getStage()
 
     if (tool === 'select') {
@@ -153,7 +153,10 @@ export function CourtCanvas() {
   return (
     <div
       ref={containerRef}
-      className={clsx('relative h-full w-full overflow-hidden grid-court-dot transition', cursorCss)}
+      className={clsx(
+        'relative h-full w-full overflow-hidden grid-court-dot transition touch-none select-none',
+        cursorCss,
+      )}
     >
       {showGlow && (
         <div className="pointer-events-none absolute inset-2 rounded-2xl ring-1 ring-accent/30 shadow-[inset_0_0_60px_rgba(122,247,200,0.08)]" />
@@ -162,10 +165,11 @@ export function CourtCanvas() {
         <Stage
           width={viewport.stageWidth}
           height={viewport.stageHeight}
-          onMouseDown={onStageMouseDown}
-          onTouchStart={onStageMouseDown as unknown as (e: Konva.KonvaEventObject<TouchEvent>) => void}
+          onMouseDown={onStageDown}
+          onTouchStart={onStageDown}
           onMouseMove={onStageMouseMove}
           onDblClick={onStageDblClick}
+          onDblTap={onStageDblClick}
         >
           <Layer listening={false}>
             <CourtSurface court={court} viewport={viewport} />

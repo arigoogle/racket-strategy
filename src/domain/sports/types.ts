@@ -24,6 +24,8 @@ export interface ServingPosition {
 export interface CourtConfig {
   sport: Sport
   displayName: string
+  /** ultra-short label for mobile pills (≤8 chars) */
+  shortName: string
   /** full playable area in meters (includes walls for padel) */
   width: number
   height: number

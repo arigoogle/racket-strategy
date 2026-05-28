@@ -107,6 +107,7 @@ export function PlayerNode({
         fillRadialGradientColorStops={[0, '#ffffff', 0.4, colors.fill, 1, colors.border]}
         stroke={selected ? '#ffffff' : colors.border}
         strokeWidth={selected ? 2.5 : 1.5}
+        hitStrokeWidth={Math.max(radius * 0.8, 20)}
       />
       {/* Label */}
       <Text

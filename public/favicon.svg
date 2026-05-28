@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#101216" />
+      <stop offset="100%" stop-color="#06070a" />
+    </linearGradient>
+    <linearGradient id="court" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1f7a64" />
+      <stop offset="100%" stop-color="#0d3f33" />
+    </linearGradient>
+    <linearGradient id="line" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7af7c8" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <radialGradient id="ball" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="35%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#a16207" />
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7af7c8" stop-opacity="0.32" />
+      <stop offset="100%" stop-color="#7af7c8" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="112" ry="112" fill="url(#bg)" />
+
+  <!-- Accent glow behind court -->
+  <circle cx="256" cy="256" r="220" fill="url(#glow)" />
+
+  <!-- Court (top-down padel) -->
+  <g transform="translate(160 60)">
+    <rect x="0" y="0" width="192" height="392" rx="10" ry="10" fill="url(#court)"
+          stroke="url(#line)" stroke-width="6" />
+
+    <!-- Service lines -->
+    <line x1="0" y1="138" x2="192" y2="138" stroke="#f4f1e8" stroke-width="3" opacity="0.85" />
+    <line x1="0" y1="254" x2="192" y2="254" stroke="#f4f1e8" stroke-width="3" opacity="0.85" />
+
+    <!-- Net -->
+    <line x1="0" y1="196" x2="192" y2="196" stroke="#0b0b0b" stroke-width="6" />
+
+    <!-- Center service lines -->
+    <line x1="96" y1="138" x2="96" y2="196" stroke="#f4f1e8" stroke-width="3" opacity="0.85" />
+    <line x1="96" y1="196" x2="96" y2="254" stroke="#f4f1e8" stroke-width="3" opacity="0.85" />
+
+    <!-- Tactical cone (mint coverage hint) -->
+    <path d="M 24 30 L 168 360 L 24 360 Z" fill="#7af7c8" opacity="0.16" />
+    <path d="M 24 30 L 168 360" stroke="#7af7c8" stroke-width="2.5" opacity="0.8" />
+    <path d="M 24 30 L 24 360" stroke="#7af7c8" stroke-width="2.5" opacity="0.8" />
+
+    <!-- Ball at attack origin -->
+    <circle cx="24" cy="30" r="14" fill="url(#ball)" stroke="#fef9c3" stroke-width="1.5" />
+  </g>
+</svg>

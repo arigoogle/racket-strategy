@@ -44,6 +44,7 @@ const baseLines = [
 export const TENNIS_SINGLES: CourtConfig = {
   sport: 'tennis_singles',
   displayName: 'Tennis · Singles',
+  shortName: 'Singles',
   width: W,
   height: H,
   hasWalls: false,
@@ -59,6 +60,7 @@ export const TENNIS_SINGLES: CourtConfig = {
 export const TENNIS_DOUBLES: CourtConfig = {
   sport: 'tennis_doubles',
   displayName: 'Tennis · Doubles',
+  shortName: 'Doubles',
   width: W,
   height: H,
   hasWalls: false,

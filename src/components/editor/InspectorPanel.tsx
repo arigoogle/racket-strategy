@@ -7,7 +7,11 @@ import type { ShotSpeed, ShotType } from '@/domain/models/scenario'
 const SHOT_TYPES: ShotType[] = ['drive', 'lob', 'volley', 'smash', 'drop', 'serve']
 const SHOT_SPEEDS: ShotSpeed[] = ['slow', 'medium', 'fast']
 
-export function InspectorPanel() {
+interface InspectorPanelProps {
+  mobile?: boolean
+}
+
+export function InspectorPanel({ mobile = false }: InspectorPanelProps) {
   const scenario = useScenarioStore((s) => s.scenario)
   const reset = useScenarioStore((s) => s.resetToDefault)
   const clearBall = useScenarioStore((s) => s.clearBall)
@@ -30,14 +34,21 @@ export function InspectorPanel() {
   const hasPath = (ballPath?.points.length ?? 0) >= 2
 
   return (
-    <aside className="panel flex h-full w-72 flex-col gap-4 overflow-y-auto p-4">
-      <header className="flex flex-col gap-2">
-        <span className="chip self-start text-accent border-accent/30 bg-accent/10">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" /> Scenario
-        </span>
-        <h2 className="text-lg font-semibold tracking-tight">{scenario.title}</h2>
-        <p className="text-xs text-ink-300">{court.displayName}</p>
-      </header>
+    <aside
+      className={clsx(
+        'flex flex-col gap-4 overflow-y-auto p-4',
+        mobile ? 'h-full w-full' : 'panel h-full w-72',
+      )}
+    >
+      {!mobile && (
+        <header className="flex flex-col gap-2">
+          <span className="chip self-start text-accent border-accent/30 bg-accent/10">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" /> Scenario
+          </span>
+          <h2 className="text-lg font-semibold tracking-tight">{scenario.title}</h2>
+          <p className="text-xs text-ink-300">{court.displayName}</p>
+        </header>
+      )}
 
       <section className="space-y-3">
         <h3 className="text-[11px] font-semibold uppercase tracking-widest2 text-ink-400">

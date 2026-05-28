@@ -48,28 +48,45 @@ const TOOLS: Array<{ id: EditorTool; label: string; hint: string; icon: JSX.Elem
   },
 ]
 
-export function Toolbar() {
+interface ToolbarProps {
+  orientation?: 'vertical' | 'horizontal'
+}
+
+export function Toolbar({ orientation = 'vertical' }: ToolbarProps) {
   const tool = useEditorStore((s) => s.tool)
   const setTool = useEditorStore((s) => s.setTool)
+  const isHorizontal = orientation === 'horizontal'
 
   return (
-    <div className="panel flex flex-col gap-1 p-1.5">
+    <div
+      className={clsx(
+        'panel flex gap-1 p-1.5',
+        isHorizontal ? 'flex-row items-center justify-around w-full' : 'flex-col',
+      )}
+    >
       {TOOLS.map((t) => {
         const active = tool === t.id
-        return (
+        const button = (
+          <button
+            onClick={() => setTool(t.id)}
+            aria-pressed={active}
+            aria-label={t.label}
+            className={clsx(
+              'group flex items-center justify-center rounded-lg transition',
+              isHorizontal ? 'h-12 w-12 flex-1 max-w-[64px]' : 'h-10 w-10',
+              active
+                ? 'bg-accent/15 text-accent ring-1 ring-accent/30 shadow-glow'
+                : 'text-ink-300 hover:bg-white/[0.06] hover:text-ink-50 active:bg-white/[0.08]',
+            )}
+          >
+            {t.icon}
+          </button>
+        )
+        return isHorizontal ? (
+          <div key={t.id} className="contents">{button}</div>
+        ) : (
           <Tooltip key={t.id} label={`${t.label} — ${t.hint}`} side="right">
-            <button
-              onClick={() => setTool(t.id)}
-              aria-pressed={active}
-              className={clsx(
-                'group flex h-10 w-10 items-center justify-center rounded-lg transition',
-                active
-                  ? 'bg-accent/15 text-accent ring-1 ring-accent/30 shadow-glow'
-                  : 'text-ink-300 hover:bg-white/[0.06] hover:text-ink-50',
-              )}
-            >
-              {t.icon}
-            </button>
+            {button}
           </Tooltip>
         )
       })}

@@ -70,6 +70,7 @@ export function BallNode({ point, court, viewport, onMove }: BallNodeProps) {
         fillRadialGradientColorStops={[0, '#ffffff', 0.3, '#fde047', 1, '#a16207']}
         stroke="#fef9c3"
         strokeWidth={1}
+        hitStrokeWidth={Math.max(r * 2.5, 24)}
       />
     </Group>
   )

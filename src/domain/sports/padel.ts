@@ -12,6 +12,7 @@ const SERVICE_OFFSET = 3 // distance from net to service line
 export const PADEL_DOUBLES: CourtConfig = {
   sport: 'padel_doubles',
   displayName: 'Padel · Doubles',
+  shortName: 'Padel',
   width: W,
   height: H,
   hasWalls: true,
