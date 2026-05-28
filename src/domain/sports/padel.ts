@@ -1,13 +1,24 @@
 import type { CourtConfig } from './types'
 
-// Padel court — 20m long × 10m wide. Net at center (y = 10).
-// Service line 3m from net on each side. Center service line splits service boxes.
-// Walls/glass surround the playable area; for v1 we render court only.
+// Official padel court — 20m long × 10m wide.
+//
+// Coordinate system (portrait, top-down):
+//   x: 0 → 10 m  (width)
+//   y: 0 → 20 m  (length)
+//
+// Key dimensions:
+//   Net                   y = 10   (dead center)
+//   Service line top      y = 3    (3 m from top baseline, 7 m from net)
+//   Service line bottom   y = 17   (3 m from bottom baseline, 7 m from net)
+//   Center service line   x = 5    (from service line to net, each half)
+//   Service box           7 m deep × 5 m wide
 
 const W = 10
 const H = 20
-const NET_Y = 10
-const SERVICE_OFFSET = 3 // distance from net to service line
+const NET_Y = H / 2                    // 10 m
+const SVC_FROM_BASELINE = 3            // 3 m from each baseline
+const SVC_Y_TOP = SVC_FROM_BASELINE    // 3 m
+const SVC_Y_BOT = H - SVC_FROM_BASELINE // 17 m
 
 export const PADEL_DOUBLES: CourtConfig = {
   sport: 'padel_doubles',
@@ -18,36 +29,50 @@ export const PADEL_DOUBLES: CourtConfig = {
   hasWalls: true,
   netY: NET_Y,
   lines: [
-    // Outer rectangle (court boundary)
-    { id: 'outer', points: [
-      { x: 0, y: 0 }, { x: W, y: 0 }, { x: W, y: H }, { x: 0, y: H }, { x: 0, y: 0 },
-    ], weight: 0.08 },
-    // Net
-    { id: 'net', points: [
-      { x: 0, y: NET_Y }, { x: W, y: NET_Y },
-    ], weight: 0.12 },
-    // Service lines (top + bottom halves)
-    { id: 'svc-top', points: [
-      { x: 0, y: NET_Y - SERVICE_OFFSET }, { x: W, y: NET_Y - SERVICE_OFFSET },
-    ], weight: 0.05 },
-    { id: 'svc-bottom', points: [
-      { x: 0, y: NET_Y + SERVICE_OFFSET }, { x: W, y: NET_Y + SERVICE_OFFSET },
-    ], weight: 0.05 },
-    // Center service line (between service line and net on each half)
-    { id: 'csl-top', points: [
-      { x: W / 2, y: NET_Y - SERVICE_OFFSET }, { x: W / 2, y: NET_Y },
-    ], weight: 0.05 },
-    { id: 'csl-bottom', points: [
-      { x: W / 2, y: NET_Y }, { x: W / 2, y: NET_Y + SERVICE_OFFSET },
-    ], weight: 0.05 },
+    // Outer boundary
+    {
+      id: 'outer',
+      points: [
+        { x: 0, y: 0 }, { x: W, y: 0 }, { x: W, y: H }, { x: 0, y: H }, { x: 0, y: 0 },
+      ],
+      weight: 0.08,
+    },
+    // Net (y = 10)
+    {
+      id: 'net',
+      points: [{ x: 0, y: NET_Y }, { x: W, y: NET_Y }],
+      weight: 0.12,
+    },
+    // Service lines — 3 m from each baseline (7 m from net)
+    {
+      id: 'svc-top',
+      points: [{ x: 0, y: SVC_Y_TOP }, { x: W, y: SVC_Y_TOP }],
+      weight: 0.05,
+    },
+    {
+      id: 'svc-bottom',
+      points: [{ x: 0, y: SVC_Y_BOT }, { x: W, y: SVC_Y_BOT }],
+      weight: 0.05,
+    },
+    // Center service line — divides service boxes, from service line to net
+    {
+      id: 'csl-top',
+      points: [{ x: W / 2, y: SVC_Y_TOP }, { x: W / 2, y: NET_Y }],
+      weight: 0.05,
+    },
+    {
+      id: 'csl-bottom',
+      points: [{ x: W / 2, y: NET_Y }, { x: W / 2, y: SVC_Y_BOT }],
+      weight: 0.05,
+    },
   ],
   regions: [],
   defaultPlayers: [
-    // Home (bottom): one at net, one at back
-    { label: 'H1', team: 'home', position: { x: W * 0.3, y: H - 3.5 }, role: 'baseline' },
-    { label: 'H2', team: 'home', position: { x: W * 0.7, y: H - 3.5 }, role: 'baseline' },
-    // Away (top): one at net, one at back
-    { label: 'A1', team: 'away', position: { x: W * 0.3, y: 3.5 }, role: 'baseline' },
-    { label: 'A2', team: 'away', position: { x: W * 0.7, y: 3.5 }, role: 'baseline' },
+    // Home (bottom half) — standard baseline starting positions
+    { label: 'H1', team: 'home', position: { x: W * 0.28, y: H - 1.5 }, role: 'baseline' },
+    { label: 'H2', team: 'home', position: { x: W * 0.72, y: H - 1.5 }, role: 'baseline' },
+    // Away (top half) — standard baseline starting positions
+    { label: 'A1', team: 'away', position: { x: W * 0.28, y: 1.5 }, role: 'baseline' },
+    { label: 'A2', team: 'away', position: { x: W * 0.72, y: 1.5 }, role: 'baseline' },
   ],
 }
