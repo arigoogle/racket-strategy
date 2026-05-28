@@ -7,6 +7,7 @@ import { useEditorStore } from '@/store/editorStore'
 import { getCourtConfig } from '@/domain/sports'
 import { clamp, type Point } from '@/domain/models/geometry'
 import { CourtSurface } from './court/CourtSurface'
+import { MeasurementOverlay } from './court/MeasurementOverlay'
 import { PlayerNode } from './players/PlayerNode'
 import { BallNode } from './paths/BallNode'
 import { BallPathLine } from './paths/BallPathLine'
@@ -31,6 +32,7 @@ export function CourtCanvas() {
   const setSelectedPlayer = useEditorStore((s) => s.setSelectedPlayer)
   const showCoverage = useEditorStore((s) => s.showCoverage)
   const showDanger = useEditorStore((s) => s.showDangerZones)
+  const showMeasurements = useEditorStore((s) => s.showMeasurements)
   const coverageReach = useEditorStore((s) => s.coverageReach)
   const attackWidthScale = useEditorStore((s) => s.attackWidthScale)
 
@@ -175,6 +177,9 @@ export function CourtCanvas() {
         >
           <Layer listening={false}>
             <CourtSurface court={court} viewport={viewport} />
+            {showMeasurements && (
+              <MeasurementOverlay court={court} viewport={viewport} />
+            )}
           </Layer>
 
           {/* Tactical zones — between court and players */}

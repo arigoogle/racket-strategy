@@ -32,8 +32,10 @@ export function InspectorPanel({ mobile = false }: InspectorPanelProps) {
   const activeStepIndex = useEditorStore((s) => s.activeStepIndex)
   const showCoverage = useEditorStore((s) => s.showCoverage)
   const showDanger = useEditorStore((s) => s.showDangerZones)
+  const showMeasurements = useEditorStore((s) => s.showMeasurements)
   const toggleCoverage = useEditorStore((s) => s.toggleCoverage)
   const toggleDanger = useEditorStore((s) => s.toggleDangerZones)
+  const toggleMeasurements = useEditorStore((s) => s.toggleMeasurements)
   const coverageReach = useEditorStore((s) => s.coverageReach)
   const setCoverageReach = useEditorStore((s) => s.setCoverageReach)
   const attackWidthScale = useEditorStore((s) => s.attackWidthScale)
@@ -76,6 +78,7 @@ export function InspectorPanel({ mobile = false }: InspectorPanelProps) {
         </h3>
         <ToggleRow label="Coverage zones" enabled={showCoverage} onToggle={toggleCoverage} />
         <ToggleRow label="Danger zones" enabled={showDanger} onToggle={toggleDanger} />
+        <ToggleRow label="Measurements" enabled={showMeasurements} onToggle={toggleMeasurements} />
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
           <RangeSlider
             label="Attack spread"
