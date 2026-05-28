@@ -31,6 +31,8 @@ export function CourtCanvas() {
   const setSelectedPlayer = useEditorStore((s) => s.setSelectedPlayer)
   const showCoverage = useEditorStore((s) => s.showCoverage)
   const showDanger = useEditorStore((s) => s.showDangerZones)
+  const coverageReach = useEditorStore((s) => s.coverageReach)
+  const attackWidthScale = useEditorStore((s) => s.attackWidthScale)
 
   const court = getCourtConfig(scenario.sport)
   const viewport = useCourtViewport({ container, court })
@@ -185,6 +187,8 @@ export function CourtCanvas() {
                 viewport={viewport}
                 showCoverage={showCoverage}
                 showDanger={showDanger}
+                reach={coverageReach}
+                attackWidthScale={attackWidthScale}
               />
             </Layer>
           )}

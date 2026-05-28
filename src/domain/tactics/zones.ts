@@ -21,6 +21,8 @@ interface ComputeZonesArgs {
   positions: PlayerPosition[]
   /** Defender reach in meters from each side of the player (lateral wingspan) */
   reach?: number
+  /** Multiplier on the attack cone's half-width at the defender baseline. 1 = corner-to-corner. */
+  attackWidthScale?: number
 }
 
 /**
@@ -80,15 +82,23 @@ function featureToRings(f: Feature<GeoPolygon | MultiPolygon> | null): Point[][]
 }
 
 /**
- * Build the full attack cone: from the ball position to the two corners of the
- * defender's baseline. This is the maximum angular spread of shots the
- * attacker can hit toward the defending half.
+ * Build the attack cone from the ball to two points on the defender baseline,
+ * symmetric around the court centre. `widthScale` of 1 gives the corner-to-corner
+ * default. Values >1 push the edges past the court (representing wall bounces /
+ * exaggerated shot range); values <1 narrow the cone.
  */
-function buildAttackTriangle(ball: Point, court: CourtConfig, baselineY: number): Point[] {
+function buildAttackTriangle(
+  ball: Point,
+  court: CourtConfig,
+  baselineY: number,
+  widthScale: number,
+): Point[] {
+  const midX = court.width / 2
+  const halfSpan = (court.width / 2) * widthScale
   return [
     ball,
-    { x: 0, y: baselineY },
-    { x: court.width, y: baselineY },
+    { x: midX - halfSpan, y: baselineY },
+    { x: midX + halfSpan, y: baselineY },
   ]
 }
 
@@ -115,6 +125,7 @@ export function computeTacticalZones({
   court,
   positions,
   reach = 1.8,
+  attackWidthScale = 1,
 }: ComputeZonesArgs): TacticalZones {
   const baselineY = defenderBaseline(ball, court)
   if (baselineY === null) {
@@ -122,14 +133,25 @@ export function computeTacticalZones({
   }
 
   const defenders = findDefenders(ball, court, positions)
-  const attackTriangle = buildAttackTriangle(ball, court, baselineY)
-  const attackPoly = toGeoPolygon(attackTriangle)
+  const attackTriangle = buildAttackTriangle(ball, court, baselineY, attackWidthScale)
+  const rawAttackPoly = toGeoPolygon(attackTriangle)
+
+  // Clip the attack against the court rectangle so the polygon never bleeds
+  // outside the playing surface, no matter how wide the spread is.
+  const courtPoly = toGeoPolygon([
+    { x: 0, y: 0 },
+    { x: court.width, y: 0 },
+    { x: court.width, y: court.height },
+    { x: 0, y: court.height },
+  ])
+  const attackPoly =
+    intersect(featureCollection([rawAttackPoly, courtPoly])) ?? rawAttackPoly
 
   if (defenders.length === 0) {
     return {
-      attack: [attackTriangle],
+      attack: featureToRings(attackPoly),
       coverage: [],
-      danger: [attackTriangle],
+      danger: featureToRings(attackPoly),
     }
   }
 

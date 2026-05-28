@@ -1,9 +1,13 @@
 import { InstallButton } from './InstallButton'
 import { SportSwitcher } from './SportSwitcher'
+import { AuthChip } from '../auth/AuthChip'
 import { useIsMobile } from '@/hooks/useMediaQuery'
+import { useUIStore } from '@/store/uiStore'
 
 export function TopBar() {
   const isMobile = useIsMobile()
+  const openSaveDialog = useUIStore((s) => s.openSaveDialog)
+  const openLibrary = useUIStore((s) => s.openLibrary)
 
   return (
     <header className="flex items-center justify-between gap-3 border-b border-white/[0.04] bg-ink-950/70 px-3 py-2.5 backdrop-blur md:px-5 md:py-3">
@@ -27,15 +31,67 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-1.5 md:gap-2">
+        <AuthChip compact={isMobile} />
         <InstallButton />
-        {!isMobile && (
+        {isMobile ? (
           <>
-            <button className="btn btn-ghost text-xs">Library</button>
-            <button className="btn btn-ghost text-xs">Save</button>
+            <IconButton
+              onClick={openLibrary}
+              ariaLabel="Library"
+              icon={
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5">
+                  <rect x="3" y="4" width="6" height="16" rx="1.5" />
+                  <rect x="11" y="4" width="6" height="16" rx="1.5" />
+                  <path d="M19 6l2.4 14.5a1 1 0 0 1-.8 1.15l-1.1.2" strokeLinecap="round" />
+                </svg>
+              }
+            />
+            <IconButton
+              onClick={openSaveDialog}
+              ariaLabel="Save"
+              primary
+              icon={
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5">
+                  <path d="M5 4h11l3 3v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" strokeLinejoin="round" />
+                  <path d="M8 4v5h7V4M8 19v-6h8v6" />
+                </svg>
+              }
+            />
+          </>
+        ) : (
+          <>
+            <button onClick={openLibrary} className="btn btn-ghost text-xs">Library</button>
+            <button onClick={openSaveDialog} className="btn btn-primary text-xs">Save</button>
           </>
         )}
       </div>
     </header>
+  )
+}
+
+function IconButton({
+  onClick,
+  icon,
+  ariaLabel,
+  primary = false,
+}: {
+  onClick: () => void
+  icon: React.ReactNode
+  ariaLabel: string
+  primary?: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={ariaLabel}
+      className={
+        primary
+          ? 'flex h-9 w-9 items-center justify-center rounded-lg bg-accent/15 text-accent ring-1 ring-accent/30 transition hover:bg-accent/25'
+          : 'flex h-9 w-9 items-center justify-center rounded-lg text-ink-200 transition hover:bg-white/[0.06] hover:text-ink-50'
+      }
+    >
+      {icon}
+    </button>
   )
 }
 

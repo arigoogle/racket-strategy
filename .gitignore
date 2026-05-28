@@ -8,3 +8,11 @@ dist-ssr
 !.env.example
 .vercel
 *.tsbuildinfo
+
+# Local credentials — never commit
+supa.yaml
+secrets.*
+credentials.*
+supabase/authsupa.md
+supabase/*credentials*
+supabase/*secret*

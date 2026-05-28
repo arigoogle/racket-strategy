@@ -1,8 +1,17 @@
 import clsx from 'clsx'
-import { useEditorStore } from '@/store/editorStore'
+import {
+  ATTACK_WIDTH_DEFAULT,
+  ATTACK_WIDTH_MAX,
+  ATTACK_WIDTH_MIN,
+  COVERAGE_REACH_DEFAULT,
+  COVERAGE_REACH_MAX,
+  COVERAGE_REACH_MIN,
+  useEditorStore,
+} from '@/store/editorStore'
 import { useScenarioStore } from '@/store/scenarioStore'
 import { getCourtConfig } from '@/domain/sports'
 import type { ShotSpeed, ShotType } from '@/domain/models/scenario'
+import { RangeSlider } from '../ui/RangeSlider'
 
 const SHOT_TYPES: ShotType[] = ['drive', 'lob', 'volley', 'smash', 'drop', 'serve']
 const SHOT_SPEEDS: ShotSpeed[] = ['slow', 'medium', 'fast']
@@ -17,6 +26,7 @@ export function InspectorPanel({ mobile = false }: InspectorPanelProps) {
   const clearBall = useScenarioStore((s) => s.clearBall)
   const setShotType = useScenarioStore((s) => s.setShotType)
   const setShotSpeed = useScenarioStore((s) => s.setShotSpeed)
+  const setTitle = useScenarioStore((s) => s.setTitle)
 
   const selectedId = useEditorStore((s) => s.selectedPlayerId)
   const activeStepIndex = useEditorStore((s) => s.activeStepIndex)
@@ -24,6 +34,10 @@ export function InspectorPanel({ mobile = false }: InspectorPanelProps) {
   const showDanger = useEditorStore((s) => s.showDangerZones)
   const toggleCoverage = useEditorStore((s) => s.toggleCoverage)
   const toggleDanger = useEditorStore((s) => s.toggleDangerZones)
+  const coverageReach = useEditorStore((s) => s.coverageReach)
+  const setCoverageReach = useEditorStore((s) => s.setCoverageReach)
+  const attackWidthScale = useEditorStore((s) => s.attackWidthScale)
+  const setAttackWidthScale = useEditorStore((s) => s.setAttackWidthScale)
 
   const court = getCourtConfig(scenario.sport)
   const step = scenario.steps[activeStepIndex]
@@ -45,7 +59,13 @@ export function InspectorPanel({ mobile = false }: InspectorPanelProps) {
           <span className="chip self-start text-accent border-accent/30 bg-accent/10">
             <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" /> Scenario
           </span>
-          <h2 className="text-lg font-semibold tracking-tight">{scenario.title}</h2>
+          <input
+            value={scenario.title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="-mx-1 rounded-md bg-transparent px-1 text-lg font-semibold tracking-tight text-ink-50 transition hover:bg-white/[0.04] focus:bg-white/[0.06] focus:outline-none"
+            aria-label="Scenario title"
+            maxLength={80}
+          />
           <p className="text-xs text-ink-300">{court.displayName}</p>
         </header>
       )}
@@ -56,6 +76,39 @@ export function InspectorPanel({ mobile = false }: InspectorPanelProps) {
         </h3>
         <ToggleRow label="Coverage zones" enabled={showCoverage} onToggle={toggleCoverage} />
         <ToggleRow label="Danger zones" enabled={showDanger} onToggle={toggleDanger} />
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+          <RangeSlider
+            label="Attack spread"
+            value={attackWidthScale}
+            min={ATTACK_WIDTH_MIN}
+            max={ATTACK_WIDTH_MAX}
+            step={0.1}
+            unit="×"
+            onChange={setAttackWidthScale}
+            onReset={() => setAttackWidthScale(ATTACK_WIDTH_DEFAULT)}
+          />
+          <p className="mt-2 text-[10px] leading-relaxed text-ink-400">
+            How wide the attacker can place the ball. 1× = corner-to-corner.
+            Above 1× picks up extra lateral angles (shots that land short along the sidelines).
+            Always clipped to the court — nothing leaves the playing surface.
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+          <RangeSlider
+            label="Defender reach"
+            value={coverageReach}
+            min={COVERAGE_REACH_MIN}
+            max={COVERAGE_REACH_MAX}
+            step={0.1}
+            unit=" m"
+            onChange={setCoverageReach}
+            onReset={() => setCoverageReach(COVERAGE_REACH_DEFAULT)}
+          />
+          <p className="mt-2 text-[10px] leading-relaxed text-ink-400">
+            Lateral wingspan each defender covers when intercepting. Wider reach &rarr;
+            larger cyan area &rarr; smaller danger zone.
+          </p>
+        </div>
       </section>
 
       <section className="space-y-3">

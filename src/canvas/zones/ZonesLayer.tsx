@@ -15,6 +15,7 @@ interface ZonesLayerProps {
   showCoverage: boolean
   showDanger: boolean
   reach?: number
+  attackWidthScale?: number
 }
 
 export function ZonesLayer({
@@ -25,11 +26,12 @@ export function ZonesLayer({
   showCoverage,
   showDanger,
   reach,
+  attackWidthScale,
 }: ZonesLayerProps) {
   const zones = useMemo(() => {
     if (!ball) return null
-    return computeTacticalZones({ ball, court, positions, reach })
-  }, [ball, court, positions, reach])
+    return computeTacticalZones({ ball, court, positions, reach, attackWidthScale })
+  }, [ball, court, positions, reach, attackWidthScale])
 
   if (!zones || zones.attack.length === 0) return null
   if (!showCoverage && !showDanger) return null

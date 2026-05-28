@@ -13,6 +13,9 @@ import { createDefaultScenario } from '@/domain/scenario/factory'
 interface ScenarioState {
   scenario: Scenario
   setSport: (sport: Sport) => void
+  setTitle: (title: string) => void
+  replaceScenario: (scenario: Scenario) => void
+  newScenario: (sport?: Sport) => void
   movePlayer: (stepIndex: number, playerId: string, x: number, y: number) => void
   placeBall: (stepIndex: number, point: Point) => void
   clearBall: (stepIndex: number) => void
@@ -44,6 +47,14 @@ export const useScenarioStore = create<ScenarioState>((set, get) => ({
     if (get().scenario.sport === sport) return
     set({ scenario: createDefaultScenario(sport) })
   },
+
+  setTitle: (title) =>
+    set((state) => ({ scenario: touch({ ...state.scenario, title }) })),
+
+  replaceScenario: (scenario) => set({ scenario }),
+
+  newScenario: (sport) =>
+    set({ scenario: createDefaultScenario(sport ?? get().scenario.sport) }),
 
   movePlayer: (stepIndex, playerId, x, y) =>
     set((state) =>
